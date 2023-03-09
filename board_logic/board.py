@@ -1,26 +1,38 @@
 class Board():
-    def __init__(self,board_size=4,board=None):
+    def __init__(self,board_size=4, initial_state_positions=[(0,0)], board=None, goal_state_positions=[(0,0)]):
         self._alphabetic_values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         self.board_size = board_size
+        self.initial_state_positions = initial_state_positions
+        self.goal_state_positions = goal_state_positions
         if board:
-            self._process_board(board)
+            self._initialize_board(board)
         else:
             self._initialize_board()
         
 
-    def _process_board(self,board):
+    def _initialize_board(self,board):
         self.board_size = board.board_size
         self.skew_board = board.skew_board
         self.hash_skew_board = board.hash_skew_board
         self.alphanumeric_board = board.alphanumeric_board
         self.board_map = board.board_map
+        self.board_state = board.board_state
         self.positions_list = board.positions_list
+        self.goal_state = board.goal_state
     
     def _initialize_board(self):
         self.skew_board = [(i,j) for i in range(self.board_size) for j in range(i,self.board_size)]
         self.hash_skew_board = set(self.skew_board)
         self.alphanumeric_board = [self._alphabetic_values[pair[0]] + str(pair[1]+1) for pair in self.skew_board]
         self.board_map = dict(zip(self.skew_board,self.alphanumeric_board))
+        self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
+        self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
+
+        # "remove peg" from position by setting value to 0
+        for position in self.initial_state_positions:
+            self.board_state[position] = 0
+        for position in self.goal_state_positions:
+            self.goal_state[position] = 1
         self.positions_list = []
         self._map_positions()
 
@@ -44,6 +56,15 @@ class Board():
                 if self._validate_position(right_diagonal_position):
                     self.positions_list.append(right_diagonal_position)
 
+    def jump(self,position):
+        if self.board_state[position[0]]:
+            self.board_state[position[0]] = 0
+            self.board_state[position[1]] = 0
+            self.board_state[position[2]] = 1
+        else:
+            self.board_state[position[0]] = 1
+            self.board_state[position[1]] = 0
+            self.board_state[position[2]] = 0
 
 if __name__ == '__main__':
     b = Board(5)
