@@ -23,7 +23,13 @@ class Board():
         
         _map_positions():
             finds all possible positions for the given board size, and sets the positions list according to the validated positions
-            reuturns None
+            returns list
+        
+        jump(position):
+            given a position (a,b,c), take a jump action where a jump action one of the two:
+                1. a = 1, b = 1, c = 0 -> a = 0, b = 0, c = 1
+                2. a = 0, b = 1, c = 1 -> a = 1, b = 0, c = 0
+            return None
         
         
         
@@ -50,10 +56,25 @@ class Board():
             self.goal_state[position] = 1
 
 
-    def _validate_position(self,position):
+    '''
+        Validates a given position p, ensuring that no cell c in p is outside the defined board using the hash_skew_map
+
+        PARAMS
+        position: a tuple of three cells (a, b, c)
+
+        RETURNS
+        True if the position is valid, False otherwise
+    '''
+    def _validate_position(self, position):
         return position[0] in self._hash_skew_board and position[1] in self._hash_skew_board and position[2] in self._hash_skew_board
 
 
+    '''
+        Finds all the possible positions for the given board size, and sets the positions list according to the valid positions
+
+        RETURNS
+        list of valid positions
+    '''
     def _map_positions(self):
         positions_list = []
         for i in range(0,self.board_size):
@@ -73,6 +94,15 @@ class Board():
                     positions_list.append(right_diagonal_position)
         return positions_list
 
+    '''
+        Takes a jump action on the given position
+                
+        PARAMS
+        a position represented by a tuple of cells (a, b, c)
+
+        RETURNS
+        None
+    '''
     def jump(self,position):
         self.board_state[position[0]] ^= 1
         self.board_state[position[1]] ^= 1
