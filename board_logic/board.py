@@ -18,7 +18,7 @@ class Board():
 
         self.hash_skew_board = set(self.skew_board)
 
-        
+
         self.stack = []
 
         # "remove peg" from position by setting value to 0
@@ -27,6 +27,7 @@ class Board():
         for position in self.goal_state_positions:
             self.goal_state[position] = 1
         self.positions_list = []
+
         self._map_positions()
 
     def _validate_position(self,position):
@@ -53,9 +54,5 @@ class Board():
         self.board_state[position[0]] ^= 1
         self.board_state[position[1]] ^= 1
         self.board_state[position[2]] ^= 1           
-
-
-if __name__ == '__main__':
-    b = Board(5)
     
     
