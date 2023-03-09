@@ -25,7 +25,7 @@ def print_state(state, board_size):
     print(st)
 
 
-for state in board.stack:
+for state in backtrack.solution_stack:
     print_state(state,board.board_size)
     
 

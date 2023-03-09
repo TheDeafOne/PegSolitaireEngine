@@ -1,7 +1,7 @@
 from board_logic.board import Board
 class Backtrack:
     def __init__(self):
-        pass
+        self.solution_stack = []
     
 
     def backtrack(self, board: Board,count=0) -> bool:
@@ -16,13 +16,13 @@ class Backtrack:
                 (not board_state[position[0]] and board_state[position[1]]and board_state[position[2]])):
                 # print([board.board_state[x] for x in position])
                 board.jump(position)
-                board.stack.append(board.board_state.copy())
+                self.solution_stack.append(board.board_state.copy())
                 # print((a,b))
                 solution = self.backtrack(board,count+1)
                 if solution:
                     return True
                 board.jump(position) # undo previous jump
-                board.stack.pop()
+                self.solution_stack.pop()
                 # board.stack.pop()
 
         return False

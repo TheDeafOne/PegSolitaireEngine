@@ -1,9 +1,12 @@
 class Board():
+    '''
+        A class used to manage and represent a peg solitaire board
+        A board can be referenced to as T, where a board is an equilateral triangle. A board with sides of length n is T_n
+        ATTRIBUTES
+        board_size: and integer representing the length of one side of the board (n in T_n)
+    '''
     def __init__(self,board_size=4, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
         self.board_size = board_size
-
-        self.initial_state_positions = initial_state_positions
-        self.goal_state_positions = goal_state_positions
 
         # set up board maps and everything necessary for identifying individual cells on a board
         self._alphabetic_values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -15,20 +18,19 @@ class Board():
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
 
-
+        # get possible positions for given board size
         self.hash_skew_board = set(self.skew_board)
+        self.positions_list = []
+        self._map_positions()
 
+        # get initial and goal state board representation
+        self.initial_state_positions = initial_state_positions
+        self.goal_state_positions = goal_state_positions
 
-        self.stack = []
-
-        # "remove peg" from position by setting value to 0
         for position in self.initial_state_positions:
             self.board_state[position] = 0
         for position in self.goal_state_positions:
             self.goal_state[position] = 1
-        self.positions_list = []
-
-        self._map_positions()
 
     def _validate_position(self,position):
         return position[0] in self.hash_skew_board and position[1] in self.hash_skew_board and position[2] in self.hash_skew_board
