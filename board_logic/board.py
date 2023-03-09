@@ -1,33 +1,25 @@
 class Board():
-    def __init__(self,board_size=4, initial_state_positions=[(0,0)], board=None, goal_state_positions=[(0,0)]):
-        self._alphabetic_values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    def __init__(self,board_size=4, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
         self.board_size = board_size
+
         self.initial_state_positions = initial_state_positions
         self.goal_state_positions = goal_state_positions
-        self.stack = []
-        if board:
-            self._initialize_board(board)
-        else:
-            self._initialize_board()
-        
 
-    def _initialize_board(self,board):
-        self.board_size = board.board_size
-        self.skew_board = board.skew_board
-        self.hash_skew_board = board.hash_skew_board
-        self.alphanumeric_board = board.alphanumeric_board
-        self.board_map = board.board_map
-        self.board_state = board.board_state
-        self.positions_list = board.positions_list
-        self.goal_state = board.goal_state
-    
-    def _initialize_board(self):
+        # set up board maps and everything necessary for identifying individual cells on a board
+        self._alphabetic_values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         self.skew_board = [(i,j) for i in range(self.board_size) for j in range(i,self.board_size)]
-        self.hash_skew_board = set(self.skew_board)
         self.alphanumeric_board = [self._alphabetic_values[pair[0]] + str(pair[1]+1) for pair in self.skew_board]
         self.board_map = dict(zip(self.skew_board,self.alphanumeric_board))
+
+        # set current state (mutable) and goal state of board (immutable)
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
+
+
+        self.hash_skew_board = set(self.skew_board)
+
+        
+        self.stack = []
 
         # "remove peg" from position by setting value to 0
         for position in self.initial_state_positions:
