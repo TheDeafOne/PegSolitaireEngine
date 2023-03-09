@@ -4,6 +4,7 @@ class Board():
         self.board_size = board_size
         self.initial_state_positions = initial_state_positions
         self.goal_state_positions = goal_state_positions
+        self.stack = []
         if board:
             self._initialize_board(board)
         else:
@@ -57,14 +58,10 @@ class Board():
                     self.positions_list.append(right_diagonal_position)
 
     def jump(self,position):
-        if self.board_state[position[0]]:
-            self.board_state[position[0]] = 0
-            self.board_state[position[1]] = 0
-            self.board_state[position[2]] = 1
-        else:
-            self.board_state[position[0]] = 1
-            self.board_state[position[1]] = 0
-            self.board_state[position[2]] = 0
+        self.board_state[position[0]] ^= 1
+        self.board_state[position[1]] ^= 1
+        self.board_state[position[2]] ^= 1           
+
 
 if __name__ == '__main__':
     b = Board(5)
