@@ -3,7 +3,8 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+        integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
     <title>Peg Solitaire Solver</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
@@ -12,19 +13,59 @@
     <div class="column-container">
         <div class="column-one">
             <div id="board-container" class="board-container">
-                <div>
-                    test
-                </div>
+                Adjust settings to begin
             </div>
         </div>
         <div class="column-two">
-            <div>
+            <h2>Settings</h2>
+            <div class="size-settings">
+                <span>board size: </span>
                 <input placeholder="n" id="board_size" onchange="setBoardSize(this.value);">
+            </div>
+            <div class="state-direction">
+                <button disabled="true" id="initial-state" onclick="setInitialState()">Set Initial State</button>
+                <button disabled="true" id="goal-state" onclick="setGoalState()">Set Goal State</button>
+            </div>
+            <div class="run-settings">
+                <button disabled="true" id="run">run</button>
+                <button disabled="true" id="pause">pause</button>
+                <button disabled="true" id="left-step">&#8592</button>
+                <button disabled="true" id="right-step">&#8594</button>
             </div>
         </div>
     </div>
 </body>
 <script>
+    var initStateSelectionMode = false;
+    var goalStateSelectionMode = false;
+    var initialState = '';
+    var goalState = '';
+
+    //https://stackoverflow.com/questions/20430349/change-css-value-by-javascript-for-whole-document
+    function applyDynamicStyleChange(element, css) {
+        var styleTag = document.createElement('style');
+        var dynamicStyleCss = document.createTextNode(css);
+        styleTag.appendChild(dynamicStyleCss);
+        var element = document.getElementsByClassName(element);
+        element[0].appendChild(styleTag);
+    }
+
+    function setInitialState() {
+        applyDynamicStyleChange('peg', '.peg {display: block;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover {transform: scale(1.08) rotate(90deg);cursor:pointer;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover .peg {display: none;}');
+
+        initStateSelectionMode = true;
+    }
+
+    function setGoalState() {
+        applyDynamicStyleChange('peg', '.peg {display: none;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover {transform: scale(1.08) rotate(90deg);cursor:pointer;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover .peg {display: block;}');
+
+        goalStateSelectionMode = true;
+    }
+
     function setBoardSize(n) {
         boardContainer = document.getElementById("board-container")
         boardContainer.innerHTML = ''
@@ -34,13 +75,47 @@
             boardRow.classList.add("board-row");
             for (j = 0; j < i + 1; j++) {
                 // new cell
+                id = String(j) + "-" + String(i)
                 cell = document.createElement("div");
-                cell.id = String(j) + "-" + String(i);
+                cell.id = 'c' + id;
                 cell.classList.add("board-cell");
+                cell.onclick = (e) => {
+                    // set targetElement to cell peg
+                    targetElement = e.target;
+                    if (targetElement.classList[0] == "side-anchor") {
+                        targetElement = targetElement.children[0];
+                    }
+
+                    // manage initial state selection
+                    if (initStateSelectionMode) {
+                        initStateSelectionMode = false;
+                        oldPegIS = document.getElementById(initialState);
+                        if (oldPegIS) {
+                            oldPegIS.style.display = "block";
+                        }
+                        
+                        targetElement.style.display = "none";
+                        initialState = targetElement.id;
+                    }
+                    
+                    // manage goal state selection
+                    if (goalStateSelectionMode) {
+                        goalStateSelectionMode = false;
+                        oldPegGS = document.getElementById(goalState);
+                        if (oldPegGS) {
+                            console.log(oldPegGS);
+                            oldPegGS.style.display = "none";
+                        }
+                        targetElement.style.display = "block";
+                        goalState = targetElement.id;
+                    }
+                }
                 sideAnchor = document.createElement("div");
                 sideAnchor.classList.add("side-anchor");
+                sideAnchor.id = 'a' + id;
                 peg = document.createElement("div");
                 peg.classList.add("peg");
+                peg.id = 'p' + id;
                 sideAnchor.appendChild(peg);
                 cell.appendChild(sideAnchor);
                 boardRow.appendChild(cell);
