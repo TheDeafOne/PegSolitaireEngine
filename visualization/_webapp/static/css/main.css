@@ -1,0 +1,156 @@
+:root {
+    --main-bg-color: #FFEBCD;
+    --secondary-bg-color: #7E8D85;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+.column-container {
+    height: 100%;
+    width: 100%;
+    display:flex;
+    align-items: center;
+    justify-content: left;
+    flex-direction: row;
+}
+
+.column-one {
+    height: 100%;
+    width: 90%;
+    margin-left: -55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.column-two {
+    height: 100%;
+    width: 10%;
+    margin-left: -38px;
+}
+
+.board-container {
+    height: 95%;
+    width: 90%;
+    margin-left: 15px;
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.board-row {
+    width: 100%;
+    height: 20px;
+    /* background-color: blue; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+/* https://stackoverflow.com/questions/17896791/hexagon-shape-with-css3 */
+.board-cell {
+    height: 90px;
+    width: 40px;
+    background: black;
+    position: relative;
+    box-sizing: border-box;
+    scale: 0.4;
+    transform: rotate(90deg);
+    border: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board-cell:hover {
+    transform: scale(1.08) rotate(90deg);
+}
+
+.board-cell::before,
+.board-cell::after {
+    content: "";
+    position: absolute;
+    height: 6px;
+    width: 0;
+    top: 0;
+    /* half height */
+    border-top: 42px solid transparent;
+    border-bottom: 42px solid transparent;
+    
+}
+
+.board-cell::before {
+    left: -25px;
+    border-right: 25px solid black;
+
+}
+
+.board-cell::after {
+    right: -24px;
+    border-left: 24px solid black;
+}
+
+.side-anchor {
+    height: 95%;
+    width: 100%;
+    background-color: white;
+    border-radius:5%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.side-anchor:hover {
+    background-color: lightgrey;
+}
+
+.side-anchor::before,
+.side-anchor::after {
+    content: "";
+    position: absolute;
+    height: 6px;
+    width: 0;
+    top: 0;
+    /* half height */
+    border-top: 42px solid transparent;
+    border-bottom: 42px solid transparent;
+}
+
+.side-anchor::before {
+    left: -23px;
+    border-right: 25px solid white;
+    scale: 0.96;
+    z-index: 2;
+}
+
+.side-anchor::after {
+    right: -22px;
+    border-left: 24px solid white;
+    scale: 0.96;
+    z-index: 2;
+} 
+
+.side-anchor:hover::before {
+    border-right: 25px solid lightgrey;
+}
+
+.side-anchor:hover::after {
+    border-left: 25px solid lightgrey;
+}
+
+.peg {
+    background-color: black;
+    height: 30px;
+    width: 30px;
+    border-radius:50%;
+    box-shadow: 0 0 10px 1px grey;
+    z-index:5;
+}

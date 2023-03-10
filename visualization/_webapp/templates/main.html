@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Peg Solitaire Solver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <div class="column-container">
+        <div class="column-one">
+            <div id="board-container" class="board-container">
+                <div>
+                    test
+                </div>
+            </div>
+        </div>
+        <div class="column-two">
+            <div>
+                <input placeholder="n" id="board_size" onchange="setBoardSize(this.value);">
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function setBoardSize(n) {
+        boardContainer = document.getElementById("board-container")
+        boardContainer.innerHTML = ''
+
+        for (i = 0; i < Number(n); i++) {
+            boardRow = document.createElement("div");
+            boardRow.classList.add("board-row");
+            for (j = 0; j < i + 1; j++) {
+                // new cell
+                cell = document.createElement("div");
+                cell.id = String(j) + "-" + String(i);
+                cell.classList.add("board-cell");
+                sideAnchor = document.createElement("div");
+                sideAnchor.classList.add("side-anchor");
+                peg = document.createElement("div");
+                peg.classList.add("peg");
+                sideAnchor.appendChild(peg);
+                cell.appendChild(sideAnchor);
+                boardRow.appendChild(cell);
+            }
+            boardContainer.appendChild(boardRow);
+        }
+
+    }
+</script>
+
+</html>
