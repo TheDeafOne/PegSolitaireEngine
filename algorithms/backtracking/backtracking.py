@@ -1,4 +1,5 @@
 from board_logic.board import Board
+import time
 
 class Backtrack:
     '''
@@ -12,9 +13,10 @@ class Backtrack:
             solves the given board using backtracking 
             returns True if board can be solved, False otherwise
     '''
-    def __init__(self):
+    def __init__(self, is_game_loop=False):
         self.solution_stack = []
-
+        self._is_game_loop = is_game_loop
+        self.next_step = False
 
     '''
         Uses backtracking to solve the given board
@@ -26,10 +28,10 @@ class Backtrack:
         True if board can be solved, False otherwise 
     '''
     def backtrack(self, board: Board) -> bool:
+        print('backtracking')
         # check if board has been solved
         if board.board_state == board.goal_state:
             return True
-        
         # get list of possible positions and current state
         positions_list = board.positions_list
         board_state = board.board_state
@@ -40,8 +42,17 @@ class Backtrack:
             # check if position is jumpable
             if ((board_state[position[0]] and board_state[position[1]] and not board_state[position[2]]) or 
                 (not board_state[position[0]] and board_state[position[1]]and board_state[position[2]])):
+                print('got here')
                 board.jump(position)
                 self.solution_stack.append(board.board_state.copy())
+
+                if self._is_game_loop:
+                    self.next_step = False
+                    print('got here')
+                    print(self.next_step)
+                    while not self.next_step:
+                        time.sleep(0.1)
+
                 solution = self.backtrack(board)
 
                 # a solution was found, push up the tree

@@ -21,6 +21,6 @@ class Visualizer:
             solution_stack = self._algorithms.backtrack(board).solution_stack
             self._console_visualizer.visualize(solution_stack,board.board_size)
     
-    def webapp(self, board: Board):
+    def webapp(self):
         self._webapp_visualizer.visualize()
         
