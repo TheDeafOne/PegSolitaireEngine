@@ -17,6 +17,7 @@ class Backtrack:
         self.solution_stack = []
         self._is_game_loop = is_game_loop
         self.next_step = False
+        self.count = 0
 
     '''
         Uses backtracking to solve the given board
@@ -28,8 +29,8 @@ class Backtrack:
         True if board can be solved, False otherwise 
     '''
     def backtrack(self, board: Board) -> bool:
-        print('backtracking')
         # check if board has been solved
+        self.count += 1
         if board.board_state == board.goal_state:
             return True
         # get list of possible positions and current state
@@ -42,16 +43,17 @@ class Backtrack:
             # check if position is jumpable
             if ((board_state[position[0]] and board_state[position[1]] and not board_state[position[2]]) or 
                 (not board_state[position[0]] and board_state[position[1]]and board_state[position[2]])):
-                print('got here')
                 board.jump(position)
-                self.solution_stack.append(board.board_state.copy())
+                # jump_position = list(zip(position,[board_state[cell] for cell in position]))
+                jump_position = dict(zip(position,[board_state[cell] for cell in position]))
+                # jump_position = position
+                self.solution_stack.append(jump_position)
 
+                # manage gameloop sleep for polling
                 if self._is_game_loop:
                     self.next_step = False
-                    print('got here')
-                    print(self.next_step)
                     while not self.next_step:
-                        time.sleep(0.1)
+                        time.sleep(0.01)
 
                 solution = self.backtrack(board)
 

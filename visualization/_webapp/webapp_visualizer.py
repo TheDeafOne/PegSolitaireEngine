@@ -13,6 +13,9 @@ class AlgorithmManager:
         global board
         board = Board(board_size,[initial_state],[goal_state])
         self.backtrack = Backtrack(True)
+        # self.console_backtrack = Backtrack()
+        # self.console_backtrack.backtrack(board)
+        # print('solution: ',self.console_backtrack.solution_stack)
     
     def _parse_state(self,state):
         return tuple(map(int,state[1:].split('-')))
@@ -22,10 +25,10 @@ class AlgorithmManager:
     
     def get_next_state(self):
         self.backtrack.next_step = True
-        
-        if self.backtrack.solution_stack:
-            return self.backtrack.solution_stack[-1]
-        return []
+        # if self.backtrack.solution_stack:
+        #     return self.backtrack.solution_stack[-1]
+        # return []
+        return self.backtrack.solution_stack
 
 
 manager = AlgorithmManager()
@@ -43,7 +46,6 @@ class WebappVisualizer:
 
     @app.route('/run/<board_size>/<initial_state>/<goal_state>')
     def run(board_size, initial_state, goal_state):
-        print("inputs: ",board_size,initial_state,goal_state,'\n')
         manager.set_board(board_size,initial_state,goal_state)
         global algo_thread
         algo_thread = Thread(target=manager.start_backtracking)
@@ -52,6 +54,9 @@ class WebappVisualizer:
       
     @app.route('/poll')
     def get_next_state():   
-        data = manager.get_next_state()     
-        print('data',data)
-        return {'data':'test'}
+        data = manager.get_next_state()  
+        ret = {}   
+        for position in data:
+            for cell in position:
+                ret['p'+str(cell)[1:-1].replace(', ','-')] = position[cell]   
+        return ret

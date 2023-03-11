@@ -18,7 +18,8 @@ class Visualizer:
             pass
         else:
             # visualize on console, just solution stack, no backtracking
-            solution_stack = self._algorithms.backtrack(board).solution_stack
+            backtracking = self._algorithms.backtrack(board)
+            solution_stack = backtracking.solution_stack
             self._console_visualizer.visualize(solution_stack,board.board_size)
     
     def webapp(self):
