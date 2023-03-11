@@ -36,7 +36,6 @@ class Board():
     '''
     def __init__(self,board_size=4, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
         self.board_size = board_size
-
         # set up board maps and everything necessary for identifying individual cells on a board
         self._alphabetic_values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         self.skew_board = [(i,j) for i in range(self.board_size) for j in range(i,self.board_size)]
