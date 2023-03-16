@@ -11,6 +11,8 @@ class Board():
         board_map: a dictionary representing the board index values (key: skew_board_value, value: alphanumeric_board_value)
         board_state: a dictionary reprenting the current boards state (key: skew_board_value, value: peg_value), 
             where peg_value is 1 if a peg is in that postion, and 0 otherwise
+        _generate_pagoda_values: a dictionary representing the board's pagoda ... (key: skew_board_value, value: pagoda_value),
+            where pagoda_value is in the range {-1, 0, 1}
         goal_state: a dictionary representing the goal state that is trying to be reached (key: skew_board_value, value: peg_value)
         _hash_skew_board: a set represention of the skew_board list
         positions_list: a list of positions p, represented by the tuple <(c_i-1,c_i,c_i+1)> of positions that the board has, 
@@ -30,7 +32,14 @@ class Board():
                 1. a = 1, b = 1, c = 0 -> a = 0, b = 0, c = 1
                 2. a = 0, b = 1, c = 1 -> a = 1, b = 0, c = 0
             return None
-        
+
+        _generate_pagoda():
+            ...
+            return bool
+
+        _verify_pagoda():
+            ...
+            return bool                
         
         
     '''
@@ -50,6 +59,9 @@ class Board():
         # set current state and goal state of board
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
+        self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
+        if (not self._generate_pagoda_values()):
+            print('Failed to find pagoda values')
         for position in initial_state_positions:
             self.board_state[position] = 0
         for position in goal_state_positions:
@@ -106,6 +118,114 @@ class Board():
     def jump(self,position):
         self.board_state[position[0]] ^= 1
         self.board_state[position[1]] ^= 1
-        self.board_state[position[2]] ^= 1           
+        self.board_state[position[2]] ^= 1    
+
+    '''
+        Generates a set of pagoda values 
+
+        RETURNS
+        True if solution found, false otherwise
+    '''    
+    def _generate_pagoda_values(self):
+        filled_stack = []
+        to_fill_stack = []
+        for i in range(0,self.board_size):
+            for j in range(0,i+1):
+                to_add = (j,i)
+                to_fill_stack.append(to_add)
+                print(str(to_add))
+        
+        # print('current stack:')
+        # for peg in to_fill_stack:
+        #     print(str(peg))
+
+        for position in self.positions_list:
+            print(str(position[0]) + ' ' + str(position[1]) + ' ' + str(position[2]))
+
+        return self._pagoda_values_backtrack(to_fill_stack.copy(),filled_stack.copy())
+
+
+    '''
+        Recursive helper backtracking method for finding a set of pagoda values 
+
+        RETURNS
+        True if solution found, false otherwise
+    '''  
+    def _pagoda_values_backtrack(self, to_fill_stack, filled_stack):
+        valid = False # holds whether the current pagoda_values are valid
+        solution_found = False
+        current = to_fill_stack.pop()
+        print('current is ' + str(current))
+        filled_stack.append(current)
+
+        # print('current filled stack:')
+        # for peg in filled_stack:
+        #     print(str(peg))
+
+        # select a value
+        for i in range (-1, 2):
+            print(str(current) + ' filled with ' + str(i))
+            self.pagoda_values[current] = i 
+            valid = True
+
+            self._pagoda_print_state()
+
+            # check constraints...
+            # check that peg(a) + peg(b) >= peg(c) for all currently valid positions
+            for position in self.positions_list:
+                if (position[0] in filled_stack and position[1] in filled_stack and position[2] in filled_stack):
+                    #print('found tuple with pegs ' + str(position[0]) + ' ' + str(position[1]) + ' ' + str(position[2]) + ' ')
+                    if (not ((self.pagoda_values[position[0]] + self.pagoda_values[position[1]] >= self.pagoda_values[position[2]]) and 
+                        (self.pagoda_values[position[2]] + self.pagoda_values[position[1]] >= self.pagoda_values[position[0]]))):
+                        valid = False
+                        # print('invalid tuple')
+                
+            # if we are at an end state and the pagoda_values are still valid, 
+            #   check that there are at least two -1 occurances
+            if (not to_fill_stack and valid):
+                count = 0
+                for val in self.pagoda_values:
+                    if (val == -1):
+                        count += 1
+                if (count < 2):
+                    valid = False
+                    #self.pagoda_print_state()
+                    print('invalid solution')
+                else:
+                    return True # we have found a solution!
+                
+            # if we have made a good move, recursive call
+            if (valid):
+                solution_found = self._pagoda_values_backtrack(to_fill_stack.copy(), filled_stack.copy())              
+                if (solution_found):
+                    return True
+
+        self.pagoda_values[current] = 0
+        #print('exiting ' + str(current))
+        return False # if we are here, we failed to find a good set of pagoda values...
+
+    '''
+        Prints current pagoda values
+
+        RETURNS
+        none
+    '''  
+    def _pagoda_print_state(self):
+        predent = " " * self.board_size
+        st = predent[1:]
+        fwtick = 1
+        cnt = 0
+        for i in range(self.board_size):
+            for j in range(i+1):
+                value = (j,i)
+                if cnt == fwtick:
+                    fwtick += 1
+                    cnt = 0
+                    st += "\n" + predent[fwtick:]
+                st += str(self.pagoda_values[value]) + " "
+                cnt += 1
+
+        
+        print(st)
     
     
