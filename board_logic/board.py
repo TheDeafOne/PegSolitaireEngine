@@ -127,22 +127,7 @@ class Board():
         True if solution found, false otherwise
     '''    
     def _generate_pagoda_values(self):
-        filled_stack = []
-        to_fill_stack = []
-        for i in range(0,self.board_size):
-            for j in range(0,i+1):
-                to_add = (j,i)
-                to_fill_stack.append(to_add)
-                print(str(to_add))
-        
-        # print('current stack:')
-        # for peg in to_fill_stack:
-        #     print(str(peg))
-
-        for position in self.positions_list:
-            print(str(position[0]) + ' ' + str(position[1]) + ' ' + str(position[2]))
-
-        return self._pagoda_values_backtrack(to_fill_stack.copy(),filled_stack.copy())
+        return self._pagoda_values_backtrack(self.skew_board,[])
 
 
     '''
@@ -155,7 +140,7 @@ class Board():
         valid = False # holds whether the current pagoda_values are valid
         solution_found = False
         current = to_fill_stack.pop()
-        print('current is ' + str(current))
+        # print('current is ' + str(current))
         filled_stack.append(current)
 
         # print('current filled stack:')
@@ -164,7 +149,7 @@ class Board():
 
         # select a value
         for i in range (-1, 2):
-            print(str(current) + ' filled with ' + str(i))
+            # print(str(current) + ' filled with ' + str(i))
             self.pagoda_values[current] = i 
             valid = True
 
@@ -173,16 +158,18 @@ class Board():
             # check constraints...
             # check that peg(a) + peg(b) >= peg(c) for all currently valid positions
             for position in self.positions_list:
-                if (position[0] in filled_stack and position[1] in filled_stack and position[2] in filled_stack):
-                    #print('found tuple with pegs ' + str(position[0]) + ' ' + str(position[1]) + ' ' + str(position[2]) + ' ')
-                    if (not ((self.pagoda_values[position[0]] + self.pagoda_values[position[1]] >= self.pagoda_values[position[2]]) and 
-                        (self.pagoda_values[position[2]] + self.pagoda_values[position[1]] >= self.pagoda_values[position[0]]))):
-                        valid = False
+                c1 = position[0]
+                c2 = position[1]
+                c3 = position[2]
+                if (c1 in filled_stack and c2 in filled_stack and c3 in filled_stack):
+                    if (not ((self.pagoda_values[c1] + self.pagoda_values[c2] >= self.pagoda_values[c3]) and 
+                        (self.pagoda_values[c3] + self.pagoda_values[c2] >= self.pagoda_values[c1]))):
+                        return False
                         # print('invalid tuple')
                 
             # if we are at an end state and the pagoda_values are still valid, 
             #   check that there are at least two -1 occurances
-            if (not to_fill_stack and valid):
+            if (not to_fill_stack):
                 count = 0
                 for val in self.pagoda_values:
                     if (val == -1):
@@ -195,10 +182,9 @@ class Board():
                     return True # we have found a solution!
                 
             # if we have made a good move, recursive call
-            if (valid):
-                solution_found = self._pagoda_values_backtrack(to_fill_stack.copy(), filled_stack.copy())              
-                if (solution_found):
-                    return True
+            solution_found = self._pagoda_values_backtrack(to_fill_stack.copy(), filled_stack.copy())              
+            if (solution_found):
+                return True
 
         self.pagoda_values[current] = 0
         #print('exiting ' + str(current))

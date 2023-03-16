@@ -2,7 +2,7 @@ from algorithms.backtracking.backtracking import Backtrack
 from board_logic.board import Board
 
 board = Board(5)
-backtrack = Backtrack()
+# backtrack = Backtrack()
 # backtrack.backtrack(board)
 
 
