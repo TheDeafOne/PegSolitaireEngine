@@ -62,6 +62,9 @@ class Board():
         self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
         if (not self._generate_pagoda_values()):
             print('Failed to find pagoda values')
+        else:
+            print('Successfully found pagoda values:')
+            self._pagoda_print_state()
         for position in initial_state_positions:
             self.board_state[position] = 0
         for position in goal_state_positions:
@@ -184,13 +187,13 @@ class Board():
             #   check that there are at least two -1 occurances
             if (not to_fill_stack and valid):
                 count = 0
-                for val in self.pagoda_values:
-                    if (val == -1):
+                for peg in filled_stack:
+                    if (self.pagoda_values[peg] == -1):
                         count += 1
                 if (count < 2):
                     valid = False
                     #self.pagoda_print_state()
-                    print('invalid solution')
+                    print(str(count) + ' so invalid solution')
                 else:
                     return True # we have found a solution!
                 
