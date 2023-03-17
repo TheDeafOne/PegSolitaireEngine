@@ -61,17 +61,11 @@ class Board():
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
         self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
-<<<<<<< HEAD
         # if (not self._generate_pagoda_values()):
         #     print('Failed to find pagoda values')
         # else:
         #     print('Successfully found pagoda values:')
         #     self._pagoda_print_state()
-=======
-
-        # if (not self._generate_pagoda_values()):
-        #     print('Failed to find pagoda values')
->>>>>>> pagodaOngoing
         for position in initial_state_positions:
             self.board_state[position] = 0
         for position in goal_state_positions:
@@ -190,27 +184,6 @@ class Board():
             if not valid:
                 continue
                 
-<<<<<<< HEAD
-            # if we are at an end state and the pagoda_values are still valid, 
-            #   check that there are at least two -1 occurances
-            if (not to_fill_stack and valid):
-                count = 0
-                for peg in filled_stack:
-                    if (self.pagoda_values[peg] == -1):
-                        count += 1
-                if (count < 2):
-                    valid = False
-                    #self.pagoda_print_state()
-                    print(str(count) + ' so invalid solution')
-                else:
-                    return True # we have found a solution!
-                
-            # if we have made a good move, recursive call
-            if (valid):
-                solution_found = self._pagoda_values_backtrack(to_fill_stack.copy(), filled_stack.copy())              
-                if (solution_found):
-                    return True
-=======
             # check solution
             solution_found = self._pagoda_values_backtrack(to_fill_stack, filled_stack)              
             if (solution_found):
@@ -221,7 +194,6 @@ class Board():
         filled_stack.remove(current)
         to_fill_stack.append(current)
 
->>>>>>> pagodaOngoing
 
         return False # if we are here, we failed to find a good set of pagoda values...
 
