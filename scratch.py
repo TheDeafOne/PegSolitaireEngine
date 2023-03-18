@@ -3,10 +3,12 @@ from board_logic.board import Board
 from visualization.vizualizer import Visualizer
 import time
 
-board = Board(6)
+board = Board(7)
+backtrack = Backtrack()
+# backtrack.backtrack(board,True)
 
 # backtrack = Backtrack()
-# start = time.time()
-# backtrack.backtrack(board)
-# end = time.time()
-# print(end-start)
+start = time.time()
+backtrack.backtrack(board)
+end = time.time()
+print(end-start)

@@ -61,11 +61,7 @@ class Board():
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
         self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
-        # if (not self._generate_pagoda_values()):
-        #     print('Failed to find pagoda values')
-        # else:
-        #     print('Successfully found pagoda values:')
-        #     self._pagoda_print_state()
+        
         for position in initial_state_positions:
             self.board_state[position] = 0
         for position in goal_state_positions:
@@ -135,69 +131,6 @@ class Board():
         self.board_state[position[0]] ^= 1
         self.board_state[position[1]] ^= 1
         self.board_state[position[2]] ^= 1    
-
-    '''
-        Generates a set of pagoda values 
-
-        RETURNS
-        True if solution found, false otherwise
-    '''    
-    def _generate_pagoda_values(self):
-        return self._pagoda_values_backtrack(self.skew_board,set())
-
-
-    '''
-        Recursive helper backtracking method for finding a set of pagoda values 
-
-        RETURNS
-        True if solution found, false otherwise
-    '''  
-    def _pagoda_values_backtrack(self, to_fill_stack, filled_stack):
-        # if we are at an end state and the pagoda_values are still valid, 
-        if (not to_fill_stack):
-            count = 0
-            for peg in filled_stack:
-                if (self.pagoda_values[peg] == -1):
-                    count += 1
-            if (count < 2):
-                return False # need more -1
-            return True # all constraints met, solution found
-        
-        current = to_fill_stack.pop()
-        filled_stack.add(current) # stack of cells the function has been applied to
-
-
-        # select a value
-        for i in range (-1, 2):
-            self.pagoda_values[current] = i 
-
-            # check constraints...
-            # check that peg(a) + peg(b) >= peg(c) for all currently valid positions
-            valid = True
-            for position in self.positions_list: # could be optimized by having a cell:position map
-                c1, c2, c3 = position
-                if ((c1 in filled_stack) and 
-                    (c2 in filled_stack) and 
-                    (c3 in filled_stack)):
-                    if ((not (self.pagoda_values[c1] <= self.pagoda_values[c2] + self.pagoda_values[c3])) or 
-                    (not (self.pagoda_values[c3] <= self.pagoda_values[c2] + self.pagoda_values[c1]))):
-                        valid = False
-                        break
-            if not valid:
-                continue
-                
-            # check solution
-            solution_found = self._pagoda_values_backtrack(to_fill_stack, filled_stack)              
-            if (solution_found):
-                return True
-            # no solution down past path, undo previous assignment
-            # if current == 1:
-            #     return False
-        filled_stack.remove(current)
-        to_fill_stack.append(current)
-
-
-        return False # if we are here, we failed to find a good set of pagoda values...
 
     
     '''
