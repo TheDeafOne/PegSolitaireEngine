@@ -14,7 +14,7 @@ class Backtrack:
     '''
     def __init__(self):
         self.solution_stack = []
-
+        self.termination_states = set()
 
     '''
         Uses backtracking to solve the given board
@@ -29,6 +29,9 @@ class Backtrack:
         # check if board has been solved
         if board.board_state == board.goal_state:
             return True
+        
+        if board.get_board_string() in self.termination_states:
+            return False
         
         # get list of possible positions and current state
         positions_list = board.positions_list
@@ -54,4 +57,5 @@ class Backtrack:
                 self.solution_stack.pop()
 
         # no solution could be found
+        self.termination_states.add(board.get_board_string())
         return False

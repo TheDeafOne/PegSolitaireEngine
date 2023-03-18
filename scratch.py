@@ -4,8 +4,9 @@ from visualization.vizualizer import Visualizer
 import time
 
 board = Board(6)
-backtrack = Backtrack()
-start = time.time()
-backtrack.backtrack(board)
-end = time.time()
-print(end-start)
+
+# backtrack = Backtrack()
+# start = time.time()
+# backtrack.backtrack(board)
+# end = time.time()
+# print(end-start)

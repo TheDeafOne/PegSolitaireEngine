@@ -119,6 +119,8 @@ class Board():
                 self.position_cell_map[cell] = []
             self.position_cell_map[cell].append(position)
 
+    def get_board_string(self):
+        return ''.join(map(str,self.board_state.values()))
 
     '''
         Takes a jump action on the given position
@@ -196,6 +198,11 @@ class Board():
 
 
         return False # if we are here, we failed to find a good set of pagoda values...
+
+    
+    '''
+    
+    '''
 
     
     '''
