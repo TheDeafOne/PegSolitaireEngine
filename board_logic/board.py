@@ -32,6 +32,10 @@ class Board():
                 1. a = 1, b = 1, c = 0 -> a = 0, b = 0, c = 1
                 2. a = 0, b = 1, c = 1 -> a = 1, b = 0, c = 0
             return None
+        
+        mirror(board):
+            given a board, finds the mirror of that board 
+            returns mirrored board object
 
         _generate_pagoda():
             ...
@@ -136,6 +140,9 @@ class Board():
         self.board_state[position[1]] ^= 1
         self.board_state[position[2]] ^= 1    
 
+      
+   
+   
     '''
         Generates a set of pagoda values 
 
