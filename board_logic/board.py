@@ -44,7 +44,7 @@ class Board():
         
     '''
     def __init__(self,board_size=5, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
-        assert board_size > 4
+        # assert board_size > 4
         self.board_size = board_size
 
         # set up board maps and everything necessary for identifying individual cells on a board

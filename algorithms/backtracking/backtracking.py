@@ -21,7 +21,6 @@ class Backtrack:
         self.use_pagoda = use_pagoda
         self.pagoda_generator = PagodaGenerator()
         self.pagoda_function = {}
-        self.count = 0
 
     '''
         Uses backtracking to solve the given board
@@ -35,21 +34,17 @@ class Backtrack:
 
     def backtrack(self, board: Board) -> bool:
         self.solution_stack = []
-        self.previous_pagoda_count = 999999
 
         if self.use_pagoda:
             self.pagoda_function = self.pagoda_generator.generate_pagoda_function(board)
-            if self.pagoda_function:
-                print(self.pagoda_function)
-            else:
+            if not self.pagoda_function:
                 self.use_pagoda = False
-                print('no solution')
 
-        if self._search(board,self.previous_pagoda_count):
+        if self._search(board):
             return self.solution_stack
         return False
 
-    def _search(self, board: Board, previous_pagoda_count):
+    def _search(self, board: Board):
         # get list of possible positions and current state
         positions_list = board.positions_list
         board_state = board.board_state
@@ -61,24 +56,15 @@ class Backtrack:
         # check if board state is memoized
         if board.get_board_string() in self.termination_states:
             return False
-            
-        
+
         if self.use_pagoda:
             pagoda_count = 0
             for cell in board_state:
                 if board_state[cell]:
                     pagoda_count += self.pagoda_function[cell]
-            if pagoda_count > previous_pagoda_count or pagoda_count <= self.pagoda_function[(0,0)]:
+            if pagoda_count <= self.pagoda_function[(0, 0)]:
                 self.termination_states.add(board.get_board_string())
                 return False
-            previous_pagoda_count = pagoda_count
-
-        
-        self.count += 1
-        if self.count%10000==0:
-            print(self.count)
-            print(len(self.termination_states))
-
 
         # cycle through positions, taking a jump at any viable position
         # a viable position is any position that has the form (1, 1, 0) or (0, 1, 1)
@@ -88,7 +74,7 @@ class Backtrack:
                     (not board_state[position[0]] and board_state[position[1]] and board_state[position[2]])):
                 board.jump(position)
                 self.solution_stack.append(board.board_state.copy())
-                solution = self._search(board,previous_pagoda_count)
+                solution = self._search(board)
 
                 # a solution was found, push up the tree
                 if solution:
