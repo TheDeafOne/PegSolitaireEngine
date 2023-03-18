@@ -32,6 +32,10 @@ class Board():
                 1. a = 1, b = 1, c = 0 -> a = 0, b = 0, c = 1
                 2. a = 0, b = 1, c = 1 -> a = 1, b = 0, c = 0
             return None
+        
+        mirror(board1):
+            given a board b1, generate the mirror of that board
+            returns mirrored board
 
         _generate_pagoda():
             ...
@@ -60,7 +64,7 @@ class Board():
         # set current state and goal state of board
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
-        self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
+        #self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
         # if (not self._generate_pagoda_values()):
         #     print('Failed to find pagoda values')
         # else:
@@ -133,6 +137,37 @@ class Board():
         self.board_state[position[0]] ^= 1
         self.board_state[position[1]] ^= 1
         self.board_state[position[2]] ^= 1    
+
+    ''' 
+        Determines the mirrored board layout
+    
+        PARAMS 
+        A board for which you are finding the mirror image 
+
+        RETURNS 
+        Mirror board
+
+    '''
+    def mirror(old_board):
+        SIZE = old_board.board_size
+        new_board = Board.__init__(board_size = SIZE)
+        for i in range(0,SIZE):
+            if (i == 0):
+                val_in = 0
+            else: 
+                val_in += (SIZE - i)
+            
+            for j in range(0, (SIZE - i)):
+                if (j == 0):
+                    loc_end = i 
+                    set_val = loc_end 
+                else:
+                    loc_end += (SIZE - (j-1))
+                    set_val = loc_end
+                loc_in = val_in + (i+j)
+                new_board[set_val] = old_board[loc_in]
+        
+        return new_board
 
     '''
         Generates a set of pagoda values 
