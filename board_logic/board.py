@@ -203,7 +203,21 @@ class Board():
     '''
     
     '''
-
+    def print_state(self):
+        predent = " " * self.board_size
+        st = predent[1:]
+        fwtick = 1
+        cnt = 0
+        for i in range(self.board_size):
+            for j in range(i+1):
+                value = (j,i)
+                if cnt == fwtick:
+                    fwtick += 1
+                    cnt = 0
+                    st += "\n" + predent[fwtick:]
+                st += str(self.board_state[value]) + " "
+                cnt += 1
+        print(st)
     
     '''
         Prints current pagoda values
