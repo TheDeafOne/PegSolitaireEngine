@@ -45,7 +45,7 @@ algo_thread: Thread
 class WebappVisualizer:
     app = Flask(__name__)
     def visualize(self):
-        self.app.run(debug=True)
+        self.app.run(debug=False)
 
     @app.route('/')
     def _run_app():
