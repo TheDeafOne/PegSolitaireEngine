@@ -1,7 +1,13 @@
 class ConsoleVisualizer:
-    def __init__(self):
-        pass
+    '''
+    Visualizes a given solution to a board
+
+    PARAMS
+    solutions_stack: the list of jumps made to get from the initial state to the goal state
+    board_size: the size of the board that has been solved
+    '''
     def visualize(self, solution_stack, board_size):
+        # cycle through the states and dynamically add whitespace to represent the triangular shape of the board
         for state in solution_stack:
             predent = " " * board_size
             st = predent[1:]
