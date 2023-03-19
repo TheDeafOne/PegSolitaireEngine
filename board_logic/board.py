@@ -171,6 +171,16 @@ class Board():
     
         PARAMS 
         A board for which you are finding the rotated image 
+
+        RETURNS 
+        Rotated board
+
+    '''
+    ''' 
+        Determines the rotated board layout
+    
+        PARAMS 
+        A board for which you are finding the rotated image 
         RETURNS 
         Rotated board
     '''
