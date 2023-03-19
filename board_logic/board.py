@@ -11,8 +11,6 @@ class Board():
         board_map: a dictionary representing the board index values (key: skew_board_value, value: alphanumeric_board_value)
         board_state: a dictionary reprenting the current boards state (key: skew_board_value, value: peg_value), 
             where peg_value is 1 if a peg is in that postion, and 0 otherwise
-        _generate_pagoda_values: a dictionary representing the board's pagoda ... (key: skew_board_value, value: pagoda_value),
-            where pagoda_value is in the range {-1, 0, 1}
         goal_state: a dictionary representing the goal state that is trying to be reached (key: skew_board_value, value: peg_value)
         _hash_skew_board: a set represention of the skew_board list
         positions_list: a list of positions p, represented by the tuple <(c_i-1,c_i,c_i+1)> of positions that the board has, 
@@ -37,15 +35,6 @@ class Board():
             given a board, finds the mirror of that board 
             returns mirrored board object
 
-        _generate_pagoda():
-            ...
-            return bool
-
-        _verify_pagoda():
-            ...
-            return bool                
-        
-        
     '''
     def __init__(self,board_size=5, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
         # assert board_size > 4

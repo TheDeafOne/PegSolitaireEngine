@@ -1,5 +1,21 @@
 from board_logic.board import Board
 class PagodaGenerator:
+    '''
+        A class used to generate a pagoda function for a given equilateral triangular peg solitaire board T_n
+        
+        ATTRIBUTES
+        board: a list of tuples (i,j) that represent cells in a board, where i is the y-axis of the board and j is the x-axis of the board
+        pagoda_values:  a dictionary representing board pagoda values (key: board_cell, value: some integer in the range {-1,0,1}) 
+
+        METHODS
+        generate_pagoda_function(board):
+            given a board, initiates search_values recursive method to find pagoda values for that board
+            return pagoda values for the given board if they exist, or an empty set if they do not
+
+        _search_values(to_fill_stack, filled_stack)
+            recursive method for finding pagoda values 
+            return True if pagoda values were found, False if they were not
+    '''
     def generate_pagoda_function(self,board:Board):
         self.pagoda_values = {}
         self.board = board
