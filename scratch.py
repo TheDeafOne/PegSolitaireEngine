@@ -3,7 +3,7 @@ from algorithms.backtracking.backtracking import Backtrack
 from board_logic.board import Board
 import time
 
-board = Board(8)
+board = Board(7)
 backtrack = Backtrack(True)
 s = time.time()
 backtrack.backtrack(board)

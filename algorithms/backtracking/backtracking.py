@@ -39,7 +39,6 @@ class Backtrack:
             self.pagoda_function = self.pagoda_generator.generate_pagoda_function(board)
             if not self.pagoda_function:
                 self.use_pagoda = False
-
         if self._search(board):
             return self.solution_stack
         return False

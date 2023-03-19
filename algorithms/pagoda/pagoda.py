@@ -3,7 +3,7 @@ class PagodaGenerator:
     def generate_pagoda_function(self,board:Board):
         self.pagoda_values = {}
         self.board = board
-        if self._search_values(self.board.skew_board,set()):
+        if self._search_values(self.board.skew_board.copy(),set()):
             return self.pagoda_values
         else:
             return {}

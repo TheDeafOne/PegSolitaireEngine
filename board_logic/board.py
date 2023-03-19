@@ -54,6 +54,7 @@ class Board():
         # set up board maps and everything necessary for identifying individual cells on a board
         self._alphabetic_values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         self.skew_board = [(i,j) for i in range(self.board_size) for j in range(i,self.board_size)]
+        print(self.skew_board)
         self.alphanumeric_board = [self._alphabetic_values[pair[0]] + str(pair[1]+1) for pair in self.skew_board]
         self.board_map = dict(zip(self.skew_board,self.alphanumeric_board))
 
