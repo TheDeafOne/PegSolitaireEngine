@@ -1,4 +1,3 @@
-from visualization.vizualizer import Visualizer
 from algorithms.backtracking.backtracking import Backtrack
 from board_logic.board import Board
 import time
