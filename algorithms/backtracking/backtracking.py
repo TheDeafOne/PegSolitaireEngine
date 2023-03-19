@@ -8,7 +8,11 @@ class Backtrack:
 
         ATTRIBUTES
         solution_stack: a stack of states that track the moves made, where only the moves that lead to the solution are kept
-
+        termination_states: a set of string representations of previously encoutnered unsolvable board states
+        use_pagoda: boolean flag for whether backtrack will use a pagoda function
+        pagoda_generator: a class for generating a pagoda function for a given board
+        pagoda_function: dictionary representing the given board's pagoda values (key: board cell, value: integer in range {-1,0,1})
+        
         METHODS
         backtrack(board)
             solves the given board using backtracking 
@@ -31,7 +35,6 @@ class Backtrack:
         RETURNS 
         The solution stack if board can be solved, False otherwise 
     '''
-
     def backtrack(self, board: Board) -> bool:
         self.solution_stack = []
 

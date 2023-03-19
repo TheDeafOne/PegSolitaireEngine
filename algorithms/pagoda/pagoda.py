@@ -13,8 +13,18 @@ class PagodaGenerator:
             return pagoda values for the given board if they exist, or an empty set if they do not
 
         _search_values(to_fill_stack, filled_stack)
-            recursive method for finding pagoda values 
+            recursive method for finding pagoda values through backtracking
             return True if pagoda values were found, False if they were not
+    '''
+
+    '''
+        Finds values a pagoda function for a given board
+
+        PARAMS
+        board: a class representing the current peg solitaire board
+
+        RETURNS 
+        Dictionary mapping board cells to pagoda values if it exists, empty set otherwise
     '''
     def generate_pagoda_function(self,board:Board):
         self.pagoda_values = {}
@@ -24,6 +34,16 @@ class PagodaGenerator:
         else:
             return {}
         
+    '''
+        Searches for pagoda values through backtracking
+
+        PARAMS
+        to_fill_stack: list of cells which have not yet been assigned pagoda values
+        filled_stack: list of cells which already have pagoda values
+
+        RETURNS 
+        True if pagoda values were found successfully, False otherwise 
+    '''        
     def _search_values(self, to_fill_stack, filled_stack):
         # if we are at an end state and the pagoda_values are still valid, 
         if (not to_fill_stack):
