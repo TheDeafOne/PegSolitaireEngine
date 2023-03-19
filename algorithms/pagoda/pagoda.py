@@ -39,11 +39,9 @@ class PagodaGenerator:
                     (not (self.pagoda_values[c3] <= self.pagoda_values[c2] + self.pagoda_values[c1]))):
                         valid = False
                         break
-            if not valid:
-                continue
                 
             # check solution
-            if (self._search_values(to_fill_stack, filled_stack)):
+            if (valid and self._search_values(to_fill_stack, filled_stack)):
                 return True
             # no solution down past path, undo previous assignment
             # if current == 1:
