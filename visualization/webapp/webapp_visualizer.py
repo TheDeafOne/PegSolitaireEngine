@@ -13,7 +13,7 @@ class AlgorithmManager:
         global board
         board = Board(board_size,[initial_state],[goal_state])
         self.run_live = False
-        self.backtrack = Backtrack(self.run_live)
+        self.backtrack = Backtrack(True, self.run_live)
 
     
     def _parse_state(self,state):
@@ -22,7 +22,7 @@ class AlgorithmManager:
     def start_backtracking(self,run_live):
         self.run_live = run_live
         if self.run_live:
-            self.backtrack = Backtrack(True)
+            self.backtrack = Backtrack(True, True)
         self.backtrack.backtrack(board)
     
     def get_next_state(self):

@@ -1,6 +1,6 @@
 from board_logic.board import Board
 from ..pagoda.pagoda import PagodaGenerator
-
+import time
 
 class Backtrack:
     '''
@@ -19,10 +19,13 @@ class Backtrack:
             returns True if board can be solved, False otherwise
     '''
 
-    def __init__(self, use_pagoda=False):
+    def __init__(self, use_pagoda=False,is_game_loop=False):
         self.solution_stack = []
         self.termination_states = set()
         self.use_pagoda = use_pagoda
+        self.is_game_loop = is_game_loop
+        self.next_step = False
+        self.did_solve = False
         self.pagoda_generator = PagodaGenerator()
         self.pagoda_function = {}
 
@@ -46,7 +49,13 @@ class Backtrack:
                 self.use_pagoda = False
 
         # begin backtracking
+        # manage gameloop sleep for polling
+                if self.is_game_loop:
+                    self.next_step = False
+                    while not self.next_step:
+                        time.sleep(0.01)
         if self._search(board):
+            self.did_solve = True
             return self.solution_stack
         
         # no solution for board
