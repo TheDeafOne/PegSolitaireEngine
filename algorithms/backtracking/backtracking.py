@@ -30,7 +30,9 @@ class Backtrack:
         if board.board_state == board.goal_state:
             return True
         
-        if board.get_board_string() in self.termination_states:
+        if (board.get_board_string() in self.termination_states
+            or ''.join(map(str,[board.board_state[x] for x in board.rotation()])) in self.termination_states
+            or ''.join(map(str,[board.board_state[x] for x in board.mirror()])) in self.termination_states):
             return False
         
         # get list of possible positions and current state
