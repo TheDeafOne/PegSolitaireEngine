@@ -32,13 +32,15 @@
                     <input id="live-switch" disabled="true" type="checkbox">
                     <span class="slider round"></span>
                 </label>
+                <button disabled="true" id="run" onclick="run()">run</button>
+
             </div>
-            <div class="run-settings">
+            <!-- <div class="run-settings">
                 <button disabled="true" id="run" onclick="run()">run</button>
                 <button disabled="true" id="pause">pause</button>
                 <button disabled="true" id="left-step">&#8592</button>
                 <button disabled="true" id="right-step">&#8594</button>
-            </div>
+            </div> -->
         </div>
     </div>
 </body>
@@ -66,7 +68,7 @@
         var elements = document.getElementsByClassName(element);
         for (element of elements) {
             element.innerHTML = ''
-        } 
+        }
     }
 
     function setInitialState() {
@@ -157,8 +159,8 @@
 
                     if (initialState !== '' && goalState !== '') {
                         document.getElementById('run').disabled = false
-                        document.getElementById('right-step').disabled = false
-                        document.getElementById('left-step').disabled = false
+                        // document.getElementById('right-step').disabled = false
+                        // document.getElementById('left-step').disabled = false
                     }
                 }
                 sideAnchor = document.createElement("div");
@@ -178,14 +180,14 @@
 
     function run() {
         isRunning = true
-        document.getElementById('pause').disabled = false
+        // document.getElementById('pause').disabled = false
         removeDynamicStyleChange('peg');
         applyDynamicStyleChange('peg', '.peg {display: block;}');
         applyDynamicStyleChange('peg', '#' + initialState + "{display: none !important;}");
-        
+
         runLive = document.getElementById("live-switch").checked;
         console.log(runLive);
-        
+
         fetch(window.location.href + "run/" + boardSize + "/" + initialState + "/" + goalState + "/" + runLive)
             .then(
                 response => {
@@ -201,6 +203,24 @@
                     poll();
                 }
             }).catch(console.log);
+    }
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+   }
+    async function applyPassiveSolution(jump_list) {
+        for (state of jump_list) {
+            console.log(state);
+            await sleep(500).then(() => {
+                removeDynamicStyleChange('peg');
+                for (jump in state) {
+                    if (state[jump]) {
+                        applyDynamicStyleChange('peg', '#' + jump + "{display: block !important;}");
+                    } else {
+                        applyDynamicStyleChange('peg', '#' + jump + "{display: none !important;}");
+                    }
+                }
+            })
+        }
     }
 
     async function poll() {
@@ -228,7 +248,7 @@
                         }
                     }
                 } else {
-                    console.log(jump_list);
+                    applyPassiveSolution(jump_list);
                 }
                 return true;
             }).catch(console.log);
