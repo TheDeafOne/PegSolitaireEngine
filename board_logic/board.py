@@ -33,15 +33,9 @@ class Board():
                 2. a = 0, b = 1, c = 1 -> a = 1, b = 0, c = 0
             return None
         
-<<<<<<< HEAD
         mirror(board):
             given a board, finds the mirror of that board 
             returns mirrored board object
-=======
-        mirror(board1):
-            given a board b1, generate the mirror of that board
-            returns mirrored board
->>>>>>> DataAnalysis
 
         _generate_pagoda():
             ...
@@ -53,7 +47,8 @@ class Board():
         
         
     '''
-    def __init__(self,board_size=4, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
+    def __init__(self,board_size=5, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
+        # assert board_size > 4
         self.board_size = board_size
 
         # set up board maps and everything necessary for identifying individual cells on a board
@@ -70,12 +65,7 @@ class Board():
         # set current state and goal state of board
         self.board_state = dict(zip(self.skew_board,[1] * len(self.skew_board)))
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
-        #self.pagoda_values = dict(zip(self.skew_board, [0] * len(self.skew_board)))
-        # if (not self._generate_pagoda_values()):
-        #     print('Failed to find pagoda values')
-        # else:
-        #     print('Successfully found pagoda values:')
-        #     self._pagoda_print_state()
+        
         for position in initial_state_positions:
             self.board_state[position] = 0
         for position in goal_state_positions:
@@ -151,10 +141,8 @@ class Board():
     
         PARAMS 
         A board for which you are finding the mirror image 
-
         RETURNS 
         Mirror board
-
     '''
     def mirror(self):
         SIZE = self.board_size
@@ -177,10 +165,18 @@ class Board():
         
         return new_board
     
+    ''' 
+        Determines the rotated board layout
+    
+        PARAMS 
+        A board for which you are finding the rotated image 
+        RETURNS 
+        Rotated board
+    '''
     def rotation(self):
         SIZE = self.board_size
         new_board = [0] * ((SIZE * (SIZE + 1))//2)
-        for i in range(0,SIZE):
+        for i in range(SIZE):
             if (i == 0):
                 val_in = 0
             else: 
@@ -197,72 +193,9 @@ class Board():
                 new_board[set_val] = self.skew_board[loc_in]
         
         return new_board
-
-    '''
-        Generates a set of pagoda values 
-
-        RETURNS
-        True if solution found, false otherwise
-    '''    
-    def _generate_pagoda_values(self):
-        return self._pagoda_values_backtrack(self.skew_board,set())
-
-
-    '''
-        Recursive helper backtracking method for finding a set of pagoda values 
-
-        RETURNS
-        True if solution found, false otherwise
-    '''  
-    def _pagoda_values_backtrack(self, to_fill_stack, filled_stack):
-        # if we are at an end state and the pagoda_values are still valid, 
-        if (not to_fill_stack):
-            count = 0
-            for peg in filled_stack:
-                if (self.pagoda_values[peg] == -1):
-                    count += 1
-            if (count < 2):
-                return False # need more -1
-            return True # all constraints met, solution found
-        
-        current = to_fill_stack.pop()
-        filled_stack.add(current) # stack of cells the function has been applied to
-
-
-        # select a value
-        for i in range (-1, 2):
-            self.pagoda_values[current] = i 
-
-            # check constraints...
-            # check that peg(a) + peg(b) >= peg(c) for all currently valid positions
-            valid = True
-            for position in self.positions_list: # could be optimized by having a cell:position map
-                c1, c2, c3 = position
-                if ((c1 in filled_stack) and 
-                    (c2 in filled_stack) and 
-                    (c3 in filled_stack)):
-                    if ((not (self.pagoda_values[c1] <= self.pagoda_values[c2] + self.pagoda_values[c3])) or 
-                    (not (self.pagoda_values[c3] <= self.pagoda_values[c2] + self.pagoda_values[c1]))):
-                        valid = False
-                        break
-            if not valid:
-                continue
-                
-            # check solution
-            solution_found = self._pagoda_values_backtrack(to_fill_stack, filled_stack)              
-            if (solution_found):
-                return True
-            # no solution down past path, undo previous assignment
-            # if current == 1:
-            #     return False
-        filled_stack.remove(current)
-        to_fill_stack.append(current)
-
-
-        return False # if we are here, we failed to find a good set of pagoda values...
-
     
     '''
+    Words
     
     '''
     def print_state(self):
@@ -281,28 +214,5 @@ class Board():
                 cnt += 1
         print(st)
     
-    '''
-        Prints current pagoda values
-
-        RETURNS
-        none
-    '''  
-    def _pagoda_print_state(self):
-        predent = " " * self.board_size
-        st = predent[1:]
-        fwtick = 1
-        cnt = 0
-        for i in range(self.board_size):
-            for j in range(i+1):
-                value = (j,i)
-                if cnt == fwtick:
-                    fwtick += 1
-                    cnt = 0
-                    st += "\n" + predent[fwtick:]
-                st += str(self.pagoda_values[value]) + " "
-                cnt += 1
-
-        
-        print(st)
     
     

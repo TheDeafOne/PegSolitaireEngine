@@ -1,4 +1,6 @@
 class ConsoleVisualizer:
+    def __init__(self):
+        pass
     def visualize(self, solution_stack, board_size):
         for state in solution_stack:
             predent = " " * board_size

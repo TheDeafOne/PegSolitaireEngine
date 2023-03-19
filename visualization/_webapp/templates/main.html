@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+        integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <title>Peg Solitaire Solver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <div class="column-container">
+        <div class="column-one">
+            <div id="board-container" class="board-container">
+                Adjust settings to begin
+            </div>
+        </div>
+        <div class="column-two">
+            <h2>Settings</h2>
+            <div class="size-settings">
+                <span>board size: </span>
+                <input placeholder="n" id="board_size" onchange="setBoardSize(this.value);">
+            </div>
+            <div class="state-direction">
+                <button disabled="true" id="initial-state" onclick="setInitialState()">Set Initial State</button>
+                <button disabled="true" id="goal-state" onclick="setGoalState()">Set Goal State</button>
+            </div>
+            <div class="state-direction">
+                <span>Live Tracking</span>
+                <label class="switch">
+                    <input id="live-switch" disabled="true" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="run-settings">
+                <button disabled="true" id="run" onclick="run()">run</button>
+                <button disabled="true" id="pause">pause</button>
+                <button disabled="true" id="left-step">&#8592</button>
+                <button disabled="true" id="right-step">&#8594</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var initStateSelectionMode = false;
+    var goalStateSelectionMode = false;
+    var boardSize = 0;
+    var initialState = '';
+    var goalState = '';
+    var timeout_delay = 300;
+    var isRunning = false;
+
+    //https://stackoverflow.com/questions/20430349/change-css-value-by-javascript-for-whole-document
+    // this is a pretty forceful function in that any style changes made will be immutable unless 
+    // removeDynamicStyleChanges
+    function applyDynamicStyleChange(element, css) {
+        var styleTag = document.createElement('style');
+        var dynamicStyleCss = document.createTextNode(css);
+        styleTag.appendChild(dynamicStyleCss);
+        var element = document.getElementsByClassName(element);
+        element[0].appendChild(styleTag);
+    }
+
+    function removeDynamicStyleChange(element) {
+        var elements = document.getElementsByClassName(element);
+        for (element of elements) {
+            element.innerHTML = ''
+        } 
+    }
+
+    function setInitialState() {
+        removeDynamicStyleChange('peg');
+        applyDynamicStyleChange('peg', '.peg {display: block;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover {transform: scale(1.08) rotate(90deg);cursor:pointer;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover .peg {display: none;}');
+
+        initStateSelectionMode = true;
+    }
+
+    function setGoalState() {
+        removeDynamicStyleChange('peg')
+        applyDynamicStyleChange('peg', '.peg {display: none;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover {transform: scale(1.08) rotate(90deg);cursor:pointer;}');
+        applyDynamicStyleChange('board-cell', '.board-cell:hover .peg {display: block;}');
+
+        goalStateSelectionMode = true;
+    }
+
+    function setBoardSize(newBoardSize) {
+        newBoardSize = Number(newBoardSize);
+        if (newBoardSize > 0) {
+            buttonList = ['initial-state', 'goal-state', 'live-switch'];
+            for (id of buttonList) {
+                button = document.getElementById(id);
+                button.disabled = false;
+            }
+            boardSize = newBoardSize;
+        }
+
+        boardContainer = document.getElementById("board-container")
+        boardContainer.innerHTML = ''
+
+        for (i = 0; i < newBoardSize; i++) {
+            boardRow = document.createElement("div");
+            boardRow.classList.add("board-row");
+            for (j = 0; j < i + 1; j++) {
+                // new cell
+                id = String(j) + "-" + String(i)
+                cell = document.createElement("div");
+                cell.id = 'c' + id;
+                cell.classList.add("board-cell");
+                cell.onclick = (e) => {
+                    // set targetElement to cell peg
+                    // console.log('initial', initialState);
+                    // console.log('goal', goalState);
+                    targetElement = e.target;
+                    console.log(targetElement.classList)
+                    if (targetElement.classList[0] == "side-anchor") {
+                        targetElement = targetElement.children[0];
+                    }
+                    if (targetElement.classList[0] == "board-cell") {
+                        targetElement = targetElement.children[0].children[0]
+                    }
+
+                    // manage initial state selection
+                    if (initStateSelectionMode) {
+                        initStateSelectionMode = false;
+                        oldPegIS = document.getElementById(initialState);
+                        removeDynamicStyleChange('peg');
+                        applyDynamicStyleChange('peg', '.peg {display: block;}');
+                        // if (oldPegIS) {
+                        //     // oldPegIS.display = "block";
+                        //     // applyDynamicStyleChange('peg', '#' + initialState + "{display: block !important;}");
+                        // }
+                        applyDynamicStyleChange('peg', '#' + targetElement.id + "{display: none !important;}");
+
+                        // targetElement.style.display = "none";
+                        initialState = targetElement.id;
+                    }
+
+                    // manage goal state selection
+                    if (goalStateSelectionMode) {
+                        goalStateSelectionMode = false;
+                        oldPegGS = document.getElementById(goalState);
+                        removeDynamicStyleChange('peg');
+                        applyDynamicStyleChange('peg', '.peg {display: none;}');
+                        // if (oldPegGS) {
+                        //     // console.log(oldPegGS);
+                        //     // oldPegGS.style.display = "none";
+                        // }
+                        // targetElement.style.display = "block";
+                        applyDynamicStyleChange('peg', '#' + targetElement.id + "{display: block !important;}");
+
+                        goalState = targetElement.id;
+                    }
+
+                    if (initialState !== '' && goalState !== '') {
+                        document.getElementById('run').disabled = false
+                        document.getElementById('right-step').disabled = false
+                        document.getElementById('left-step').disabled = false
+                    }
+                }
+                sideAnchor = document.createElement("div");
+                sideAnchor.classList.add("side-anchor");
+                sideAnchor.id = 'a' + id;
+                peg = document.createElement("div");
+                peg.classList.add("peg");
+                peg.id = 'p' + id;
+                sideAnchor.appendChild(peg);
+                cell.appendChild(sideAnchor);
+                boardRow.appendChild(cell);
+            }
+            boardContainer.appendChild(boardRow);
+        }
+
+    }
+
+    function run() {
+        isRunning = true
+        document.getElementById('pause').disabled = false
+        removeDynamicStyleChange('peg');
+        applyDynamicStyleChange('peg', '.peg {display: block;}');
+        applyDynamicStyleChange('peg', '#' + initialState + "{display: none !important;}");
+        
+        runLive = document.getElementById("live-switch").checked;
+        console.log(runLive);
+        
+        fetch(window.location.href + "run/" + boardSize + "/" + initialState + "/" + goalState + "/" + runLive)
+            .then(
+                response => {
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status ${response.status}`);
+                    }
+                    if (runLive) {
+                        poll_timeout(timeout_delay);
+                    }
+                }
+            ).then(async () => {
+                if (!runLive) {
+                    poll();
+                }
+            }).catch(console.log);
+    }
+
+    async function poll() {
+        return fetch(window.location.href + "poll")
+            .then(
+                response => {
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status ${response.status}`);
+                    }
+                    return response.json();
+                }
+            ).then(jump_list => {
+                var changed = false;
+
+                if (runLive) {
+                    console.log('running live')
+                    console.log(jump_list);
+                    for (jump in jump_list) {
+                        cell = document.getElementById(jump);
+                        cell.innerHTML = '';
+                        if (jump_list[jump]) {
+                            applyDynamicStyleChange('peg', '#' + jump + "{display: block !important;}");
+                        } else {
+                            applyDynamicStyleChange('peg', '#' + jump + "{display: none !important;}");
+                        }
+                    }
+                } else {
+                    console.log(jump_list);
+                }
+                return true;
+            }).catch(console.log);
+    }
+
+    function poll_timeout(time) {
+        console.log("polling with delay", time);
+        function poll_to() {
+            poll().then(
+                success => {
+                    if (success) window.setTimeout(poll_to, time);
+                }
+            )
+        }
+        window.setTimeout(poll_to, time);
+    }
+</script>
+
+</html>
