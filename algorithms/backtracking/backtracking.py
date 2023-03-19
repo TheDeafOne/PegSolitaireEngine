@@ -71,10 +71,10 @@ class Backtrack:
             return True
 
         # check if board state, its rotation, or its reflection is memoized
-        if (board.get_board_string() in self.termination_states
-            or ''.join(map(str,[board.board_state[x] for x in board.rotation()])) in self.termination_states
-            or ''.join(map(str,[board.board_state[x] for x in board.mirror()])) in self.termination_states):
-            return False
+        # if (board.get_board_string() in self.termination_states
+        #     or ''.join(map(str,[board.board_state[x] for x in board.rotation()])) in self.termination_states
+        #     or ''.join(map(str,[board.board_state[x] for x in board.mirror()])) in self.termination_states):
+        #     return False
 
         if self.use_pagoda:
             pagoda_count = 0
@@ -105,5 +105,5 @@ class Backtrack:
                 self.solution_stack.pop()
 
         # no solution could be found
-        self.termination_states.add(board.get_board_string())
+        # self.termination_states.add(board.get_board_string())
         return False
