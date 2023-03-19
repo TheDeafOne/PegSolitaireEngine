@@ -1,4 +1,4 @@
-from ._console.consoleVisualizer import ConsoleVisualizer
+from ._console.console_visualizer import ConsoleVisualizer
 from algorithms.backtracking.backtracking import Backtrack
 from board_logic.board import Board
 
