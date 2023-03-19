@@ -177,6 +177,16 @@ class Board():
         
         return new_board
     
+    ''' 
+        Determines the rotated board layout
+    
+        PARAMS 
+        A board for which you are finding the rotated image 
+
+        RETURNS 
+        Rotated board
+
+    '''
     def rotation(self):
         SIZE = self.board_size
         new_board = [0] * ((SIZE * (SIZE + 1))//2)
