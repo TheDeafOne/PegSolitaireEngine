@@ -5,7 +5,7 @@ import time
 print("An Algorithm to Solve Triangular Peg Solitaire using Enhanced Backtracking Methods")
 size_desired = input("Enter Desired Board Size to Test:")
 
-board = Board(10)
+board = Board(size_desired)
 backtrack = Backtrack(True)
 s = time.time()
 backtrack.backtrack(board)
