@@ -118,12 +118,25 @@ class Board():
                     self._map_position_to_cell(right_diagonal_position)
         return positions_list
     
+    '''
+        maps a list of positions to a given cell
+        
+        PARAMS
+        position: the position containing cells c, all of which are to have position mapped to them.
+    '''
     def _map_position_to_cell(self,position):
         for cell in position:
             if cell not in self.position_cell_map:
                 self.position_cell_map[cell] = []
             self.position_cell_map[cell].append(position)
 
+
+    '''
+        returns the board state as a string
+
+        RETURNS
+        string representation of the board state
+    '''
     def get_board_string(self):
         return ''.join(map(str,self.board_state.values()))
 
