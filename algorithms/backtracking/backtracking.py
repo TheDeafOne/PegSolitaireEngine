@@ -23,26 +23,41 @@ class Backtrack:
         self.pagoda_function = {}
 
     '''
-        Uses backtracking to solve the given board
+        starts backtracking with different specified algorithms
 
         PARAMS
         board: a class representing the current peg solitaire board
 
         RETURNS 
-        True if board can be solved, False otherwise 
+        The solution stack if board can be solved, False otherwise 
     '''
 
     def backtrack(self, board: Board) -> bool:
         self.solution_stack = []
 
+        # add pagoda function if requested
         if self.use_pagoda:
             self.pagoda_function = self.pagoda_generator.generate_pagoda_function(board)
             if not self.pagoda_function:
+                # no pagoda function for given board
                 self.use_pagoda = False
+
+        # begin backtracking
         if self._search(board):
             return self.solution_stack
+        
+        # no solution for board
         return False
 
+    '''
+        uses backtracking to solve the given board
+
+        PARAMS
+        board: a class representing the current peg solitaire board
+
+        RETURNS 
+        The solution stack if board can be solved, False otherwise 
+    '''
     def _search(self, board: Board):
         # get list of possible positions and current state
         positions_list = board.positions_list
@@ -52,7 +67,7 @@ class Backtrack:
         if board.board_state == board.goal_state:
             return True
 
-        # check if board state is memoized
+        # check if board state, its rotation, or its reflection is memoized
         if (board.get_board_string() in self.termination_states
             or ''.join(map(str,[board.board_state[x] for x in board.rotation()])) in self.termination_states
             or ''.join(map(str,[board.board_state[x] for x in board.mirror()])) in self.termination_states):
