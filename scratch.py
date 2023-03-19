@@ -3,20 +3,23 @@ from algorithms.backtracking.backtracking import Backtrack
 from board_logic.board import Board
 import time
 
-for i in range (9, 12):
+board1 = Board(4)
+print(Board.rotation(board1))
+
+#for i in range (9, 12):
 
     #time_vals = []
-    board = Board(i)
-    backtrack = Backtrack()
-    first = time.time()
-    backtrack.backtrack(board)
-    final = time.time()
+    #board = Board(i)
+    #backtrack = Backtrack()
+    #first = time.time()
+    #backtrack.backtrack(board)
+    #final = time.time()
 
-    tdelta = final - first
-    print(tdelta)
+    #tdelta = final - first
+    #print(tdelta)
     #time_vals.append(tdelta)
 
-    print(f"Time value for board size {i}: {tdelta}")
+    #print(f"Time value for board size {i}: {tdelta}")
     #average = sum(time_vals)/len(time_vals)
     #print(f"Average for board size {i}: {average}")
 

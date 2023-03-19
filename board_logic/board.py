@@ -148,9 +148,9 @@ class Board():
         Mirror board
 
     '''
-    def mirror(old_board):
-        SIZE = old_board.board_size
-        new_board = Board.__init__(board_size = SIZE)
+    def mirror(self):
+        SIZE = self.board_size
+        new_board = [0] * ((SIZE * (SIZE + 1))//2)
         for i in range(0,SIZE):
             if (i == 0):
                 val_in = 0
@@ -165,7 +165,28 @@ class Board():
                     loc_end += (SIZE - (j-1))
                     set_val = loc_end
                 loc_in = val_in + (i+j)
-                new_board[set_val] = old_board[loc_in]
+                new_board[set_val] = self.skew_board[loc_in]
+        
+        return new_board
+    
+    def rotation(self):
+        SIZE = self.board_size
+        new_board = [0] * ((SIZE * (SIZE + 1))//2)
+        for i in range(0,SIZE):
+            if (i == 0):
+                val_in = 0
+            else: 
+                val_in += (SIZE - i)
+            
+            for j in range(0, (SIZE - i)):
+                if (j == 0):
+                    loc_end = (SIZE - (i+1)) 
+                    set_val = loc_end 
+                else:
+                    loc_end += (SIZE - j)
+                    set_val = loc_end
+                loc_in = val_in + (i+j)
+                new_board[set_val] = self.skew_board[loc_in]
         
         return new_board
 
