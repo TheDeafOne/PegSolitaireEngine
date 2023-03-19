@@ -35,6 +35,19 @@ class Board():
             given a board, finds the mirror of that board 
             returns mirrored board object
 
+        rotate(board):
+            given a board, finds a rotation of that board
+            returns rotated board object
+
+        _generate_pagoda():
+            ...
+            return bool
+
+        _verify_pagoda():
+            ...
+            return bool                
+        
+        
     '''
     def __init__(self,board_size=5, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
         # assert board_size > 4
@@ -103,12 +116,25 @@ class Board():
                     self._map_position_to_cell(right_diagonal_position)
         return positions_list
     
+    '''
+        maps a list of positions to a given cell
+        
+        PARAMS
+        position: the position containing cells c, all of which are to have position mapped to them.
+    '''
     def _map_position_to_cell(self,position):
         for cell in position:
             if cell not in self.position_cell_map:
                 self.position_cell_map[cell] = []
             self.position_cell_map[cell].append(position)
 
+
+    '''
+        returns the board state as a string
+
+        RETURNS
+        string representation of the board state
+    '''
     def get_board_string(self):
         return ''.join(map(str,self.board_state.values()))
 
@@ -135,36 +161,26 @@ class Board():
         Mirror board
     '''
     def mirror(self):
-        SIZE = self.board_size
-        new_board = [0] * ((SIZE * (SIZE + 1))//2)
-        for i in range(0,SIZE):
+        SIZE = self.board_size #saves the side length of the board as a variable SIZE
+        new_board = [0] * ((SIZE * (SIZE + 1))//2) #creates a new board for the rotation
+        for i in range(0,SIZE): #i and j values used to delineate the board into sections based on skew
             if (i == 0):
                 val_in = 0
-            else: 
+            else: #if i is not 0, increments the index of the value in self to be moved by (SIZE - i)
                 val_in += (SIZE - i)
             
-            for j in range(0, (SIZE - i)):
-                if (j == 0):
+            for j in range(0, (SIZE - i)): #iterates through each value in the skew
+                if (j == 0): #finds the index in new_board to put the value at index val_in in the orignal board
                     loc_end = i 
                     set_val = loc_end 
-                else:
-                    loc_end += (SIZE - (j-1))
+                else: #if j is not 0, increments the index in new_board for the value by (SIZE - (j-1))
+                    loc_end += (SIZE - (j-1)) 
                     set_val = loc_end
                 loc_in = val_in + (i+j)
-                new_board[set_val] = self.skew_board[loc_in]
+                new_board[set_val] = self.skew_board[loc_in] #sets the value at index set_val for the new board to the value at val_in from the old board
         
-        return new_board
+        return new_board #returns the rotated board
     
-    ''' 
-        Determines the rotated board layout
-    
-        PARAMS 
-        A board for which you are finding the rotated image 
-
-        RETURNS 
-        Rotated board
-
-    '''
     ''' 
         Determines the rotated board layout
     
@@ -173,30 +189,34 @@ class Board():
         RETURNS 
         Rotated board
     '''
-    def rotation(self):
-        SIZE = self.board_size
-        new_board = [0] * ((SIZE * (SIZE + 1))//2)
-        for i in range(SIZE):
-            if (i == 0):
+    def rotation(self): 
+        SIZE = self.board_size #saves the side length of the board as a variable SIZE
+        new_board = [0] * ((SIZE * (SIZE + 1))//2) #creates a new board for the rotation
+        for i in range(SIZE): #i and j values used to delineate the board into sections based on skew                  
+            if (i == 0): 
                 val_in = 0
-            else: 
+            else: #if i is not 0, increments the index of the value in self to be moved by (SIZE - i)
                 val_in += (SIZE - i)
             
-            for j in range(0, (SIZE - i)):
+            for j in range(0, (SIZE - i)): #iterates through each value in the skew
                 if (j == 0):
-                    loc_end = (SIZE - (i+1)) 
+                    loc_end = (SIZE - (i+1)) #finds the index in new_board to put the value at index val_in in the orignal board
                     set_val = loc_end 
-                else:
+                else: #if j is not 0, increments the index in new_board for the value by (SIZE - j)
                     loc_end += (SIZE - j)
                     set_val = loc_end
                 loc_in = val_in + (i+j)
-                new_board[set_val] = self.skew_board[loc_in]
+                new_board[set_val] = self.skew_board[loc_in] #sets the value at index set_val for the new board to the value at val_in from the old board
         
-        return new_board
+        return new_board #returns the rotated board
     
     '''
-    Words
-    
+        Prints out the current state of the board object
+
+        PARAMS 
+        The current board that you are printing 
+        RETURNS 
+        None
     '''
     def print_state(self):
         predent = " " * self.board_size
