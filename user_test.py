@@ -22,8 +22,8 @@ def main():
                     size_desired = int(size_desired)
                     should_break = False
                     while True:
-                        if size_desired < 0 or size_desired > 20:
-                            print('size desired must be a number from 1 to 20')
+                        if size_desired < 5 or size_desired > 20:
+                            print('size desired must be a number from 5 to 20')
                         else:
                             board = Board(size_desired)
                             backtrack = Backtrack(True)
@@ -41,7 +41,7 @@ def main():
                     if should_break:
                         break
                 else:
-                    print('size must be a number from 1 to 20')
+                    print('size must be a number from 5 to 20')
 
 
 if __name__ == "__main__":
