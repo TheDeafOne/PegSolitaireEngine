@@ -50,7 +50,8 @@ class Board():
         
     '''
     def __init__(self,board_size=5, initial_state_positions=[(0,0)], goal_state_positions=[(0,0)]):
-        # assert board_size > 4
+        if not isinstance(board_size, int) or not 1 <= board_size <= 26:
+            raise ValueError('board size must be an integer from 1 to 26')
         self.board_size = board_size
 
         # set up board maps and everything necessary for identifying individual cells on a board
@@ -69,8 +70,12 @@ class Board():
         self.goal_state = dict(zip(self.skew_board,[0] * len(self.skew_board)))
         
         for position in initial_state_positions:
+            if position not in self._hash_skew_board:
+                raise ValueError('initial position is outside the board')
             self.board_state[position] = 0
         for position in goal_state_positions:
+            if position not in self._hash_skew_board:
+                raise ValueError('goal position is outside the board')
             self.goal_state[position] = 1
 
 
@@ -248,6 +253,3 @@ class Board():
                 st += str(self.board_state[value]) + " "
                 cnt += 1
         print(st)
-    
-    
-    
