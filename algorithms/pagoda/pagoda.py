@@ -26,9 +26,10 @@ class PagodaGenerator:
         RETURNS 
         Dictionary mapping board cells to pagoda values if it exists, empty set otherwise
     '''
-    def generate_pagoda_function(self,board:Board):
+    def generate_pagoda_function(self,board:Board,cancel_event=None):
         self.pagoda_values = {}
         self.board = board
+        self.cancel_event = cancel_event
         if self._search_values(self.board.skew_board.copy(),set()):
             return self.pagoda_values
         else:
@@ -45,6 +46,8 @@ class PagodaGenerator:
         True if pagoda values were found successfully, False otherwise 
     '''        
     def _search_values(self, to_fill_stack, filled_stack):
+        if self.cancel_event is not None and self.cancel_event.is_set():
+            return False
         # if we are at an end state and the pagoda_values are still valid, 
         if (not to_fill_stack):
             count = 0

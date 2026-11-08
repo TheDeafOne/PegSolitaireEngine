@@ -1,31 +1,112 @@
 # Peg Solitaire Engine
-## Our Motive
-[Peg solitaire](https://en.wikipedia.org/wiki/Peg_solitaire), a game now most known for its presence in Cracker Barrel, has been around for the last few centuries. It has gained multiple variants alongside its followers and has stumped many for as long as it has existed. We seek to provide a set of algorithms that help solve peg solitaire, specifically the triangular variant.
-## The Setup
-To solve this problem, we first had to frame it in terms of a program. To do this, some more formal terminology is introduced:
-### Board
-A board is represented as a set of coordinate values within a triangle of size n. A triangle of size n has (n*(n+1))/2 coordinates since that is the [nth triangular number](https://en.wikipedia.org/wiki/Triangular_number). Each coordinate represents a cell, which has a value of 1 or 0. This value identifies whether the cell contains a peg or not.
-### Positions
-We identify all the positions within a board. A position is a tuple of three collinear cells.
-This allows us to efficiently represent jumps, which are positions that follow the patterns (1,1,0) or (0,1,1).
-## The Algorithms
+
+Peg Solitaire Engine explores algorithms for solving triangular [peg solitaire](https://en.wikipedia.org/wiki/Peg_solitaire). Choose an initial hole and a goal, then search for a sequence of jumps that leaves the final peg in that cell.
+
+![A complete 13-jump solution on a five-row triangular board](docs/solution.gif)
+
+*Replay rendered from an actual solver run, rather than a screenshot of the web application. The board starts with 14 pegs and an empty top cell; after 13 legal jumps, the remaining peg returns to the top.*
+
+## Motivation
+
+Peg solitaire is a small game with a surprisingly large search space. A move that looks useful can leave a board with no way to finish, and different paths can lead back to the same unsuccessful position.
+
+We wanted to explore how backtracking, remembered failures, and pagoda functions change the way we search that space. The triangular board makes the process easy to follow: every jump removes one peg, and a solution is a path from the initial arrangement to a particular goal.
+
+## The board
+
+A triangle with `n` rows has `n(n + 1) / 2` cells. Each cell is represented by a coordinate and a value: `1` for a peg, `0` for a hole.
+
+We precompute every line of three adjacent cells. A jump changes `(1, 1, 0)` into `(0, 0, 1)`, or `(0, 1, 1)` into `(1, 0, 0)`. Toggling the same three cells again undoes the move during search.
+
+The [board implementation](board_logic/board.py) handles these positions, jumps, and board representations. The goal is an exact arrangement, so a final peg in a different cell does not count as a solution.
+
+## Algorithms
+
 ### Backtracking
-Backtracking is the specific use of depth-first search. This means that it is our brute force solution, which has some major downsides such as exponential runtime.\
-Our implementation can be seen in algorithms/backtracking/backtracking.py
-### Dynamic Programming
-Dynamic programming is just an extension of Backtracking, where we store bad states in a set that we reference later throughout backtracking. This allows us to identify previously seen bad states.\
-Our implementation can be seen in algorithms/backtracking/backtracking.py
-### Pagoda Functions
-Pagoda functions are a method of pruning states from the search tree by tracking the values found by the function throughout the recursion.\
-Our implementation of a pagoda function can be found in algorithms/pagoda/pagoda.py
+
+The solver tries a legal jump, continues from the resulting board, and undoes the jump if that path cannot reach the goal. This is depth-first search over the possible board states.
+
+### Remembering failed states
+
+When a position has no solution, its representation is stored in a set. If another path reaches that same position, the solver can skip it instead of repeating the work. The set is cleared for each new search because a failure for one goal may be a success for another.
+
+The solver uses exact board states here. Rotating a failed state is not enough to establish another failure when the chosen goal stays fixed.
+
+### Pagoda functions
+
+A pagoda function assigns a weight to each cell so that a legal jump cannot increase the total weight of the occupied cells. If a position's total falls below the goal's total, that position cannot reach the goal and can be pruned.
+
+The [generator](algorithms/pagoda/pagoda.py) searches for weights in `{-1, 0, 1}` that satisfy the jump constraints. The [solver](algorithms/backtracking/backtracking.py) can use those weights alongside backtracking and failed-state memoization. If no suitable function is found, it continues without that pruning rule.
+
+This repository demonstrates the approaches; the replay above is not a performance comparison between them.
+
+## Running the project
+
+Use Python 3.10 or newer. The application and regression checks were verified with Python 3.12 and Flask 3.0.
+
+```sh
+git clone https://github.com/TheDeafOne/PegSolitaireEngine.git
+cd PegSolitaireEngine
+python -m venv .venv
+```
+
+Activate the environment with `source .venv/bin/activate` on macOS/Linux, or `.venv\Scripts\Activate.ps1` in Windows PowerShell. Then install and run:
+
+```sh
+python -m pip install -r requirements.txt
+python -m visualization.webapp.webapp_visualizer
+```
+
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000).
+
+1. Enter a board size. Start with **5**; the initial hole and goal default to the top cell.
+2. To change either, select **Set Initial State** or **Set Goal State**, then click a cell.
+3. Select **Run** to find and replay a solution.
+4. Enable **Show search live** to watch explored positions, including unsuccessful branches, rather than only the final solution.
+5. Use **Reset / cancel** to stop a search or replay and restore the initial board.
+
+The web application reports solved, unsolved, cancelled, and error outcomes. Each search owns its board and worker, so starting another search does not replace the board being used by an older one. The web interface accepts sizes 2–10, but larger boards can still take a long time: the search space grows quickly.
+
+For the original console menu, run `python user_test.py` and choose `c`. Choosing `w` opens the same web application. Stop the console menu with Ctrl+C.
+
+## Using the solver directly
+
+```python
+from board_logic.board import Board
+from algorithms.backtracking.backtracking import Backtrack
+
+board = Board(5, initial_state_positions=[(0, 0)],
+              goal_state_positions=[(0, 0)])
+solver = Backtrack(use_pagoda=True)
+states = solver.backtrack(board)
+
+if solver.did_solve:
+    print(f"Solved in {len(states)} jumps")
+else:
+    print("No solution")
+```
+
+Coordinates are `(column, row)`, starting at zero. `initial_state_positions` lists the holes; `goal_state_positions` lists the occupied goal cells. A successful result contains the board state after each jump. Check `did_solve` to distinguish an already-solved board, whose path is empty, from an unsuccessful search.
+
+## Replay and checks
+
+The [recorded states](docs/solution.json) include the initial board and all 13 jumps. To regenerate the GIF and still images:
+
+```sh
+python -m pip install -r requirements-demo.txt
+python tools/render_solution.py
+```
+
+The renderer checks every jump against the board's legal positions and verifies the final goal before writing the images.
+
+Run the solver and web-job checks with:
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+These include every three-row board state and one-peg goal, compared with an independent breadth-first reference, both with and without pagoda pruning. They also cover cancellation, unsolvable searches, independent workers, errors, and the web endpoints. If Node.js is available, `node tests/check_web_script.cjs` checks stale-request cancellation and replay handling without launching a browser.
 
 ## Paper
-We uncovered some interesting heuristics, methods, and algorithmic variations to solve peg solitaire. Our findings can be further explored in our [research paper](solving_peg_solitaire_with_adv_backtracking.pdf)
 
-## Running Solutions
-To run solutions, use user_test.py. You will then be asked whether you want to use the console visualizer or the web app visualizer. Both allow you to choose board sizes and run solutions on the chosen boards. Then the solution to get from the initial board to the goal board is shown.
-
-### Using the web app
-This portion of the project is still in testing and is a little buggy, but works for basic operations such as setting the board size, choosing the initial and goal states and vizualizing the solution for the given board.
-\
-Once a board size is chosen, the initial and goal boards can be made, and the solver can be run. Once a solution is found, the solver will automatically display the solution step by step.
+We discuss the heuristics, methods, and algorithmic variations further in [Solving Peg Solitaire with Advanced Backtracking](solving_peg_solitaire_with_adv_backtracking.pdf).

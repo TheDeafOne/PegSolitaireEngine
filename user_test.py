@@ -34,8 +34,11 @@ def main():
                                 f"The length of the Backtrack Solution Stack: {len(backtrack.solution_stack)}")
                             print(
                                 f"The time in seconds to find a solution for board size {size_desired}: {e-s}")
-                            print("The solution:")
-                            ConsoleVisualizer().visualize(backtrack.solution_stack, board.board_size)
+                            if backtrack.did_solve:
+                                print("The solution:")
+                                ConsoleVisualizer().visualize(backtrack.solution_stack, board.board_size)
+                            else:
+                                print("No solution for this initial board and goal.")
                             should_break = True
                         break
                     if should_break:
