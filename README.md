@@ -4,7 +4,7 @@ Peg Solitaire Engine explores algorithms for solving triangular [peg solitaire](
 
 ![A complete 13-jump solution on a five-row triangular board](docs/solution.gif)
 
-*Replay rendered from an actual solver run, rather than a screenshot of the web application. The board starts with 14 pegs and an empty top cell; after 13 legal jumps, the remaining peg returns to the top.*
+*A complete solution: the board starts with 14 pegs and an empty top cell. After 13 jumps, the remaining peg returns to the top.*
 
 ## Motivation
 
@@ -30,7 +30,7 @@ The solver tries a legal jump, continues from the resulting board, and undoes th
 
 When a position has no solution, its representation is stored in a set. If another path reaches that same position, the solver can skip it instead of repeating the work. The set is cleared for each new search because a failure for one goal may be a success for another.
 
-The solver uses exact board states here. Rotating a failed state is not enough to establish another failure when the chosen goal stays fixed.
+Failed states are cached in their exact orientation so the cache respects the selected goal.
 
 ### Pagoda functions
 
@@ -38,11 +38,9 @@ A pagoda function assigns a weight to each cell so that a legal jump cannot incr
 
 The [generator](algorithms/pagoda/pagoda.py) searches for weights in `{-1, 0, 1}` that satisfy the jump constraints. The [solver](algorithms/backtracking/backtracking.py) can use those weights alongside backtracking and failed-state memoization. If no suitable function is found, it continues without that pruning rule.
 
-This repository demonstrates the approaches; the replay above is not a performance comparison between them.
-
 ## Running the project
 
-Use Python 3.10 or newer. The application and regression checks were verified with Python 3.12 and Flask 3.0.
+Use Python 3.10 or newer. The web interface uses Flask 3.0.
 
 ```sh
 git clone https://github.com/TheDeafOne/PegSolitaireEngine.git
@@ -67,7 +65,7 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000).
 
 The web application reports solved, unsolved, cancelled, and error outcomes. Each search owns its board and worker, so starting another search does not replace the board being used by an older one. The web interface accepts sizes 2–10, but larger boards can still take a long time: the search space grows quickly.
 
-For the original console menu, run `python user_test.py` and choose `c`. Choosing `w` opens the same web application. Stop the console menu with Ctrl+C.
+For the console menu, run `python user_test.py` and choose `c`. Choosing `w` opens the same web application. Stop the console menu with Ctrl+C.
 
 ## Using the solver directly
 
